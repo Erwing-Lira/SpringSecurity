@@ -7,7 +7,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,7 +24,6 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
     /**
@@ -39,7 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Configure manually without Annotations with @EnableMethodSecurity
-                /*.authorizeHttpRequests(authorize ->
+                .authorizeHttpRequests(authorize ->
                         authorize
                                 // Configure any public endpoints
                                 .requestMatchers("/v1/hello").permitAll()
@@ -48,7 +46,6 @@ public class SecurityConfig {
                                 // Configure rest endpoints without specific
                                 .anyRequest().authenticated()
                 )
-                 */
                 .httpBasic(Customizer.withDefaults());
         return httpSecurity.build();
     }

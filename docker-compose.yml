@@ -1,0 +1,27 @@
+services:
+  mysql:
+    image: mysql:8.0.33
+    container_name: mysql_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_DATABASE=securityDB
+    volumes:
+      - ./databases/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+#  phpmyadmin:
+#    image: phpmyadmin:5.2.0-apache
+#    container_name: phpmyadmin
+#    restart: always
+#    environment:
+#      - PMA_ARBITRARY=1
+#    ports:
+#      - "9091:80"
+#    depends_on:
+#      - mysql
+
+volumes:
+  databases:
+    driver: local
