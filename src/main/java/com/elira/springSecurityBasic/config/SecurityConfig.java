@@ -1,7 +1,9 @@
 package com.elira.springSecurityBasic.config;
 
+import com.elira.springSecurityBasic.service.UserDetailServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,16 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -39,12 +34,22 @@ public class SecurityConfig {
                 // Configure manually without Annotations with @EnableMethodSecurity
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                // Configure any public endpoints
-                                .requestMatchers("/v1/hello").permitAll()
-                                // Configure any private endpoints
-                                .requestMatchers("/v1/hello-secured").hasAuthority("CREATE")
-                                // Configure rest endpoints without specific
-                                .anyRequest().authenticated()
+                                // Configure any public endpoints permitAll()
+                                // Configure any private endpoints hasAuthority("CREATE")
+                                // Configure rest endpoints without specific authenticated()
+
+                                // BASE ON ROLES
+                                // .requestMatchers(HttpMethod.GET, "/v1/auth/get").hasRole("ADMIN")
+
+                                // BASED ON AUTHORITIES
+                                .requestMatchers(HttpMethod.GET, "/v1/auth/get").hasAuthority("READ")
+                                .requestMatchers(HttpMethod.POST, "/v1/auth/post").hasAnyAuthority("CREATE", "DELETE")
+                                .requestMatchers(HttpMethod.PUT, "/v1/auth/put").hasAnyAuthority("CREATE")
+                                .requestMatchers(HttpMethod.DELETE, "/v1/auth/delete").hasAuthority("DELETE")
+                                .requestMatchers(HttpMethod.PATCH, "/v1/auth/patch").hasAuthority("UPDATE")
+
+                                // OTHER CASE DANY ACCESS
+                                .anyRequest().denyAll()
                 )
                 .httpBasic(Customizer.withDefaults());
         return httpSecurity.build();
@@ -67,7 +72,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvide(
             PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService
+            UserDetailServiceImpl userDetailsService
     ) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -81,30 +86,6 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        // Simulate that the database has this user
-        List<UserDetails> userDetailsList = new ArrayList<>();
-        userDetailsList.add(
-                User.builder()
-                        .username("root")
-                        .password("root")
-                        .roles("ADMIN")
-                        .authorities("READ", "CREATE")
-                        .build()
-        );
-        userDetailsList.add(
-                User.builder()
-                        .username("root1")
-                        .password("root1")
-                        .roles("USER")
-                        .authorities("READ")
-                        .build()
-        );
-
-        return new InMemoryUserDetailsManager(userDetailsList);
+        return new BCryptPasswordEncoder();
     }
 }

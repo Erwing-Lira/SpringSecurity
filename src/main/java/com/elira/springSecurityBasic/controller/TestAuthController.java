@@ -1,25 +1,33 @@
 package com.elira.springSecurityBasic.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/auth")
 public class TestAuthController {
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello world!";
+    @GetMapping("/get")
+    public String helloGet() {
+        return "Hello Get";
     }
 
-    @GetMapping("/hello-secured")
-    public String helloSecured() {
-        return "Hello world Secured!";
+    @PostMapping("/post")
+    public String helloPost() {
+        return "Hello Post";
     }
 
-    @GetMapping("/hello-secured-two")
-    public String helloSecuredTwo() {
-        return "Hello world Secured Two!";
+    @PutMapping("/put")
+    public String helloPut() {
+        return "Hello Put";
+    }
+
+    @DeleteMapping("/delete")
+    public String helloDelete() {
+        return "Hello Delete";
+    }
+
+    @PatchMapping("/patch")
+    public String helloPatch() {
+        return "Hello Patch";
     }
 }

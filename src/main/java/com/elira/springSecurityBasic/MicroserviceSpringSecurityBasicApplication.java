@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.Set;
@@ -55,8 +56,7 @@ public class MicroserviceSpringSecurityBasicApplication {
 					.permissionList(
 							Set.of(
 									createPermissionEntity,
-									readPermissionEntity,
-									updatePermissionEntity
+									readPermissionEntity
 							)
 					)
 					.build();
@@ -68,10 +68,12 @@ public class MicroserviceSpringSecurityBasicApplication {
 							)
 					)
 					.build();
+			// Encrypt password for root
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 			// Create Users
 			UserEntity oneUserEntity = UserEntity.builder()
 					.username("root")
-					.password("root")
+					.password(encoder.encode("root"))
 					.isEnabled(true)
 					.accountNoExpired(true)
 					.accountNoLocked(true)
@@ -82,7 +84,7 @@ public class MicroserviceSpringSecurityBasicApplication {
 					.build();
 			UserEntity twoUserEntity = UserEntity.builder()
 					.username("root1")
-					.password("root")
+					.password(encoder.encode("root"))
 					.isEnabled(true)
 					.accountNoExpired(true)
 					.accountNoLocked(true)
@@ -93,7 +95,7 @@ public class MicroserviceSpringSecurityBasicApplication {
 					.build();
 			UserEntity threeUserEntity = UserEntity.builder()
 					.username("root2")
-					.password("root")
+					.password(encoder.encode("root"))
 					.isEnabled(true)
 					.accountNoExpired(true)
 					.accountNoLocked(true)
