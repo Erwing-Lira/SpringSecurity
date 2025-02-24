@@ -1,6 +1,9 @@
 package com.elira.springSecurityBasic.config;
 
+import com.elira.springSecurityBasic.config.filter.JwtTokenValidator;
 import com.elira.springSecurityBasic.service.UserDetailServiceImpl;
+import com.elira.springSecurityBasic.util.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,10 +19,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     /**
      * Chain of filters for security
@@ -41,17 +48,23 @@ public class SecurityConfig {
                                 // BASE ON ROLES
                                 // .requestMatchers(HttpMethod.GET, "/v1/auth/get").hasRole("ADMIN")
 
+                                // PERMIT ALL
+                                .requestMatchers("/v1/auth/**").permitAll()
+
                                 // BASED ON AUTHORITIES
-                                .requestMatchers(HttpMethod.GET, "/v1/auth/get").hasAuthority("READ")
-                                .requestMatchers(HttpMethod.POST, "/v1/auth/post").hasAnyAuthority("CREATE", "DELETE")
-                                .requestMatchers(HttpMethod.PUT, "/v1/auth/put").hasAnyAuthority("CREATE")
-                                .requestMatchers(HttpMethod.DELETE, "/v1/auth/delete").hasAuthority("DELETE")
-                                .requestMatchers(HttpMethod.PATCH, "/v1/auth/patch").hasAuthority("UPDATE")
+                                .requestMatchers(HttpMethod.GET, "/v1/method/get").hasAuthority("READ")
+                                .requestMatchers(HttpMethod.POST, "/v1/method/post").hasAnyAuthority("CREATE", "DELETE")
+                                .requestMatchers(HttpMethod.PUT, "/v1/method/put").hasAnyAuthority("CREATE")
+                                .requestMatchers(HttpMethod.DELETE, "/v1/method/delete").hasAuthority("DELETE")
+                                .requestMatchers(HttpMethod.PATCH, "/v1/method/patch").hasAuthority("UPDATE")
 
                                 // OTHER CASE DANY ACCESS
                                 .anyRequest().denyAll()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .addFilterBefore(
+                        new JwtTokenValidator(jwtUtils),
+                        BasicAuthenticationFilter.class
+                );
         return httpSecurity.build();
     }
 

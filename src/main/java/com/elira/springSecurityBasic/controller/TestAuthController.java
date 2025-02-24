@@ -3,7 +3,7 @@ package com.elira.springSecurityBasic.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/v1/method")
 public class TestAuthController {
 
     @GetMapping("/get")

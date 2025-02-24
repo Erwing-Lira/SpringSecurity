@@ -24,3 +24,11 @@ spring:
 #    user:
 #      name: root
 #      password: root
+
+  #SecretKeyForSpringSecurityCourse
+  security:
+    jwt:
+      key:
+        private: d98b2777e33847054692ee4ebd60f3f4bc14e5dccfca670c2c1a4c059f89435a
+      user:
+        generator: root-jwt
