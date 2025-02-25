@@ -1,9 +1,14 @@
 package com.elira.springSecurityBasic.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/method")
+@Tag(
+        name = "Test",
+        description = "Test the endpoints base on the role, permission and the token"
+)
 public class TestAuthController {
 
     @GetMapping("/get")

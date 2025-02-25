@@ -51,6 +51,12 @@ public class SecurityConfig {
                                 // PERMIT ALL
                                 .requestMatchers("/v1/auth/**").permitAll()
 
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+                                ).permitAll()
+
                                 // BASED ON AUTHORITIES
                                 .requestMatchers(HttpMethod.GET, "/v1/method/get").hasAuthority("READ")
                                 .requestMatchers(HttpMethod.POST, "/v1/method/post").hasAnyAuthority("CREATE", "DELETE")
